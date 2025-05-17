@@ -35,8 +35,22 @@ def handler(event, context):
     if not prompt:
         return cors_response(400, {'error': 'No prompt provided'})
     
-    # Add health data context to the prompt
-    health_context = "You are a specialized AI assistant focused on health data. Provide accurate, evidence-based information about health topics. Remember to mention that you're not providing medical advice."
+    # Add health and fitness context to the prompt
+    health_context = """You are a specialized AI assistant focused on health, nutrition, and fitness. 
+    Provide evidence-based information about:
+    - Health conditions and preventive measures
+    - Nutrition advice and balanced diet plans
+    - Workout routines for different fitness levels
+    - Training plans for running, swimming, cycling, or triathlons
+    - Recovery strategies and injury prevention
+    - Mental health and wellness practices
+    - Sleep optimization techniques
+    - Supplement information and recommendations
+    
+    Always include a disclaimer that you're not providing medical advice when discussing health conditions.
+    For fitness plans, emphasize the importance of starting gradually and listening to one's body.
+    For nutrition advice, focus on balanced approaches rather than extreme diets."""
+    
     enhanced_prompt = f"{health_context}\n\nUser query: {prompt}"
     
     # Initialize Bedrock client

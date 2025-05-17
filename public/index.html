@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Data AI Assistant</title>
+    <title>Health & Fitness Assistant</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -65,18 +65,46 @@
             text-align: center;
             margin-top: 20px;
         }
+        .examples {
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .examples h4 {
+            margin-top: 0;
+            color: #0066cc;
+        }
+        .examples ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Health Data AI Assistant</h1>
-            <p>Ask questions about health data, medical research, or healthcare topics</p>
+            <h1>Health & Fitness Assistant</h1>
+            <p>Your AI guide for health, nutrition, and fitness information</p>
+        </div>
+        
+        <div class="examples">
+            <h4>You can ask about:</h4>
+            <ul>
+                <li>Health conditions and preventive measures</li>
+                <li>Nutrition advice and balanced diet plans</li>
+                <li>Workout routines for different fitness levels</li>
+                <li>Training plans for running, swimming, cycling, or triathlons</li>
+                <li>Recovery strategies and injury prevention</li>
+                <li>Mental health and wellness practices</li>
+                <li>Sleep optimization techniques</li>
+                <li>Supplement information and recommendations</li>
+            </ul>
         </div>
         
         <div>
-            <h3>Enter your question:</h3>
-            <textarea id="prompt" placeholder="Example: What are the key factors affecting heart disease risk?"></textarea>
+            <h3>What would you like to know?</h3>
+            <textarea id="prompt" placeholder="Example: Can you suggest a 12-week half marathon training plan for beginners?"></textarea>
         </div>
         
         <div>
@@ -85,12 +113,12 @@
         
         <div>
             <h3>Response:</h3>
-            <div id="response">Your health information will appear here...</div>
+            <div id="response">Your health and fitness information will appear here...</div>
         </div>
         
         <div class="disclaimer">
-            Note: This AI assistant provides information based on health data research but does not provide medical advice. 
-            Always consult with healthcare professionals for medical concerns.
+            Note: This AI assistant provides general information based on health and fitness research but does not provide medical advice. 
+            Always consult with healthcare professionals for medical concerns and certified trainers for personalized fitness programs.
         </div>
     </div>
 
@@ -105,7 +133,7 @@
             }
             
             // Show loading state
-            responseElement.textContent = "Processing your health data question...";
+            responseElement.textContent = "Analyzing your health and fitness question...";
             responseElement.classList.add('loading');
             document.getElementById('submit').disabled = true;
             
