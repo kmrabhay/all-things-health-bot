@@ -1,5 +1,5 @@
 {
-  "name": "workshop",
+  "name": "healthy-nation",
   "version": "0.1.0",
   "bin": {
     "workshop": "bin/workshop.js"
