@@ -21,14 +21,17 @@ def handler(event, context):
             'body': ''
         }
     
-    # Extract the prompt from the API Gateway event
+    # Extract the prompt and profile data from the API Gateway event
     prompt = ""
+    profile_data = {}
+    
     if event.get('queryStringParameters') and event.get('queryStringParameters').get('prompt'):
         prompt = event['queryStringParameters']['prompt']
     elif event.get('body'):
         try:
             body = json.loads(event['body'])
             prompt = body.get('prompt', '')
+            profile_data = body.get('profileData', {})
         except:
             return cors_response(400, {'error': 'Invalid request body'})
     
@@ -51,7 +54,47 @@ def handler(event, context):
     For fitness plans, emphasize the importance of starting gradually and listening to one's body.
     For nutrition advice, focus on balanced approaches rather than extreme diets."""
     
-    enhanced_prompt = f"{health_context}\n\nUser query: {prompt}"
+    # Create personalized context from profile data if available
+    personalized_context = ""
+    if any(profile_data.values()):
+        personalized_context = "User Profile Information:\n"
+        
+        if profile_data.get('age'):
+            personalized_context += f"- Age: {profile_data['age']} years\n"
+        
+        if profile_data.get('gender'):
+            personalized_context += f"- Gender: {profile_data['gender']}\n"
+        
+        if profile_data.get('height') and profile_data.get('weight'):
+            height_cm = float(profile_data['height'])
+            weight_kg = float(profile_data['weight'])
+            
+            # Calculate BMI if both height and weight are provided
+            if height_cm > 0 and weight_kg > 0:
+                height_m = height_cm / 100
+                bmi = weight_kg / (height_m * height_m)
+                bmi_category = get_bmi_category(bmi)
+                personalized_context += f"- Height: {height_cm} cm\n"
+                personalized_context += f"- Weight: {weight_kg} kg\n"
+                personalized_context += f"- BMI: {bmi:.1f} ({bmi_category})\n"
+        elif profile_data.get('height'):
+            personalized_context += f"- Height: {profile_data['height']} cm\n"
+        elif profile_data.get('weight'):
+            personalized_context += f"- Weight: {profile_data['weight']} kg\n"
+        
+        if profile_data.get('activityLevel'):
+            personalized_context += f"- Activity Level: {profile_data['activityLevel']}\n"
+        
+        if profile_data.get('goals'):
+            personalized_context += f"- Health Goals: {profile_data['goals']}\n"
+        
+        if profile_data.get('healthConditions'):
+            personalized_context += f"- Health Conditions: {profile_data['healthConditions']}\n"
+        
+        personalized_context += "\nTailor your response to this user's specific profile. Consider their age, gender, BMI, activity level, goals, and health conditions when providing advice. Make your response personalized and relevant to their situation.\n"
+    
+    # Combine all context with the user's prompt
+    enhanced_prompt = f"{health_context}\n\n{personalized_context}\nUser query: {prompt}"
     
     # Initialize Bedrock client
     bedrock_runtime = boto3.client(service_name='bedrock-runtime')
@@ -107,6 +150,17 @@ def handler(event, context):
             
         except Exception as fallback_error:
             return cors_response(500, {'error': f'Error processing request: {str(e)}'})
+
+def get_bmi_category(bmi):
+    """Return BMI category based on BMI value"""
+    if bmi < 18.5:
+        return "Underweight"
+    elif bmi < 25:
+        return "Normal weight"
+    elif bmi < 30:
+        return "Overweight"
+    else:
+        return "Obesity"
 
 def cors_response(status_code, body_dict):
     """Helper function to create responses with CORS headers"""
